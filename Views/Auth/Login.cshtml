@@ -1,0 +1,239 @@
+﻿@{
+    ViewData["Title"] = "Login - SocialSync";
+}
+
+<div class="min-vh-80 d-flex align-items-center justify-content-center py-5">
+    <div class="card border-0 shadow-lg" style="max-width: 600px; width: 100%; border-radius: 20px; overflow: hidden;">
+        <!-- Gradient Header -->
+        <div class="card-header bg-gradient-primary text-white text-center py-4 border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="d-flex justify-content-center mb-3">
+                <div class="rounded-circle bg-white p-3" style="width: 70px; height: 70px;">
+                    <i class="fas fa-users fa-2x text-gradient-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+            </div>
+            <h3 class="fw-bold mb-1">Welcome Back</h3>
+            <p class="mb-0 opacity-75">Sign in to your SocialSync account</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <form method="post" asp-action="Login" id="loginForm" class="needs-validation" novalidate>
+                <!-- Email Field -->
+                <div class="mb-4">
+                    <label for="email" class="form-label fw-semibold text-dark mb-2">
+                        <i class="fas fa-envelope me-2 text-primary"></i>Email Address
+                    </label>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-user text-muted"></i>
+                        </span>
+                        <input type="email"
+                               id="email"
+                               name="Email"
+                               class="form-control border-start-0 ps-0"
+                               placeholder="Enter your email"
+                               required
+                               autocomplete="email"
+                               autofocus>
+                    </div>
+                    <div class="invalid-feedback mt-2">
+                        Please enter a valid email address.
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label for="password" class="form-label fw-semibold text-dark mb-0">
+                            <i class="fas fa-lock me-2 text-primary"></i>Password
+                        </label>
+                        <a href="#" class="text-decoration-none small text-primary fw-medium">
+                            Forgot Password?
+                        </a>
+                    </div>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-key text-muted"></i>
+                        </span>
+                        <input type="password"
+                               id="password"
+                               name="Password"
+                               class="form-control border-start-0 ps-0"
+                               placeholder="Enter your password"
+                               required
+                               autocomplete="current-password">
+                        <button class="btn btn-outline-secondary border-start-0" type="button" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback mt-2">
+                        Please enter your password.
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-lg btn-gradient-primary w-100 mb-4 fw-semibold shadow-sm" id="loginBtn">
+                    <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
+                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                </button>
+
+                
+            </form>
+
+            <!-- Registration Link -->
+            <div class="text-center pt-3 border-top">
+                <p class="text-muted mb-0">
+                    Don't have an account?
+                    <a asp-controller="Auth" asp-action="Register"
+                       class="text-gradient-primary fw-semibold text-decoration-none ms-1">
+                        Create an account
+                        <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Decorative Footer -->
+        <div class="card-footer bg-light text-center py-3 border-0">
+            <small class="text-muted">
+                <i class="fas fa-shield-alt me-1"></i>
+                Your data is securely encrypted
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Add Font Awesome if not already included -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    /* Custom Styles */
+    :root {
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-primary-hover: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+
+    .bg-gradient-primary {
+        background: var(--gradient-primary) !important;
+    }
+
+    .btn-gradient-primary {
+        background: var(--gradient-primary);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-gradient-primary:hover {
+            background: var(--gradient-primary-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4) !important;
+        }
+
+        .btn-gradient-primary:active {
+            transform: translateY(0);
+        }
+
+    .text-gradient-primary {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+
+    .input-group-text {
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus + .input-group-text {
+        border-color: #667eea;
+        background-color: rgba(102, 126, 234, 0.1);
+    }
+
+    /* Animation for form */
+    .card {
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 576px) {
+        .card-body {
+            padding: 1.5rem !important;
+        }
+
+        .input-group-lg {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Form validation
+        (function () {
+            'use strict'
+            var form = document.getElementById('loginForm');
+            var loginBtn = document.getElementById('loginBtn');
+            var spinner = loginBtn.querySelector('.spinner-border');
+
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    // Show loading state
+                    loginBtn.disabled = true;
+                    spinner.classList.remove('d-none');
+                    loginBtn.querySelector('.fa-sign-in-alt').classList.add('d-none');
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+
+            // Password visibility toggle
+            document.getElementById('togglePassword').addEventListener('click', function () {
+                var passwordInput = document.getElementById('password');
+                var icon = this.querySelector('i');
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+
+            // Remove validation on input
+            var inputs = form.querySelectorAll('input');
+            inputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    if (this.checkValidity()) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            });
+        })();
+    </script>
+}

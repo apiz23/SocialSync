@@ -1,0 +1,93 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
+using System.Text;
+using Newtonsoft.Json;
+using BCrypt.Net;
+
+public class AuthController : Controller
+{
+    private readonly HttpClient _http;
+    private readonly string _supabaseUrl;
+    private readonly string _supabaseKey;
+
+    public AuthController(IHttpClientFactory clientFactory, IConfiguration config)
+    {
+        _http = clientFactory.CreateClient();
+        _supabaseUrl = config["Supabase:Url"];
+        _supabaseKey = config["Supabase:AnonKey"];
+
+        _http.BaseAddress = new Uri($"{_supabaseUrl}/rest/v1/");
+        _http.DefaultRequestHeaders.Add("apikey", _supabaseKey);
+        _http.DefaultRequestHeaders.Add("Authorization", "Bearer " + _supabaseKey);
+    }
+
+    [HttpGet]
+    public IActionResult Login() => View();
+
+    [HttpPost]
+    public async Task<IActionResult> Login(string Email, string Password)
+    {
+        var response = await _http.GetAsync($"sosial_sync_users?email=eq.{Email}&select=*");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["Error"] = "Login failed. Try again.";
+            return View();
+        }
+
+        var json = await response.Content.ReadAsStringAsync();
+        var users = JsonConvert.DeserializeObject<List<dynamic>>(json);
+
+        if (users.Count == 0)
+        {
+            TempData["Error"] = "Email not found.";
+            return View();
+        }
+
+        var user = users[0];
+        string storedHash = user.password;
+        bool valid = BCrypt.Net.BCrypt.Verify(Password, storedHash);
+
+        if (!valid)
+        {
+            TempData["Error"] = "Incorrect password.";
+            return View();
+        }
+
+        // ✅ Store logged-in email in session
+        HttpContext.Session.SetString("UserEmail", Email);
+
+        TempData["Success"] = "Login successful!";
+        return RedirectToAction("Index", "Profile"); // redirect to profile page
+    }
+
+    [HttpGet]
+    public IActionResult Register() => View();
+
+    [HttpPost]
+    public async Task<IActionResult> Register(string FullName, string Email, string Password)
+    {
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(Password);
+
+        var newUser = new
+        {
+            fullname = FullName,
+            email = Email,
+            password = hashedPassword
+        };
+
+        var json = JsonConvert.SerializeObject(newUser);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        var response = await _http.PostAsync("sosial_sync_users", content);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["Error"] = "Failed to create account.";
+            return View();
+        }
+
+        TempData["Success"] = "Account created successfully!";
+        return RedirectToAction("Login");
+    }
+}

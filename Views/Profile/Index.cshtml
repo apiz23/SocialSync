@@ -1,15 +1,72 @@
-﻿@{
-    ViewData["Title"] = "Profile";
+﻿@model SocialSync.Models.User
+
+@{
+    ViewData["Title"] = "My Profile";
 }
 
 <div class="container py-5">
+
+    <!-- SUCCESS / ERROR MESSAGE -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
     <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
-            <div class="card p-4 shadow-sm">
-                <i class="fas fa-user-circle fa-7x mb-3 text-primary"></i>
-                <h2>@ViewData["FullName"]</h2>
-                <p class="text-muted">@ViewData["Email"]</p>
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <h3 class="text-center mb-4">My Profile</h3>
+
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input class="form-control" value="@Model.FullName" readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" value="@Model.Email" readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input class="form-control" value="@Model.Phone" readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date Joined</label>
+                        <input class="form-control"
+                               value="@Model.DateJoined.ToString("dd MMM yyyy")"
+                               readonly />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Account Status</label>
+                        <input class="form-control"
+                               value="@(Model.IsActive ? "Active" : "Deactivated")"
+                               readonly />
+                    </div>
+
+                    <a asp-action="Edit" class="btn btn-primary w-100">
+                        Edit Profile
+                    </a>
+
+                </div>
             </div>
+
         </div>
     </div>
 </div>

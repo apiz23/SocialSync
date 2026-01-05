@@ -17,17 +17,31 @@ public class AuthController : Controller
         _supabaseKey = config["Supabase:AnonKey"];
 
         _http.BaseAddress = new Uri($"{_supabaseUrl}/rest/v1/");
+        _http.DefaultRequestHeaders.Clear();
         _http.DefaultRequestHeaders.Add("apikey", _supabaseKey);
-        _http.DefaultRequestHeaders.Add("Authorization", "Bearer " + _supabaseKey);
+        _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {_supabaseKey}");
+        _http.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json")
+        );
+        _http.DefaultRequestHeaders.Add("Prefer", "return=representation");
     }
 
+    // =========================
+    // GET LOGIN
+    // =========================
     [HttpGet]
     public IActionResult Login() => View();
 
+    // =========================
+    // POST LOGIN
+    // =========================
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(string Email, string Password)
     {
-        var response = await _http.GetAsync($"sosial_sync_users?email=eq.{Email}&select=*");
+        var response = await _http.GetAsync(
+            $"sosial_sync_users?email=eq.{Email}&select=id,email,password"
+        );
 
         if (!response.IsSuccessStatusCode)
         {
@@ -38,13 +52,15 @@ public class AuthController : Controller
         var json = await response.Content.ReadAsStringAsync();
         var users = JsonConvert.DeserializeObject<List<dynamic>>(json);
 
-        if (users.Count == 0)
+        if (users == null || users.Count == 0)
         {
             TempData["Error"] = "Email not found.";
             return View();
         }
 
         var user = users[0];
+
+        // ✅ CORRECT PROPERTY ACCESS (LOWERCASE)
         string storedHash = user.password;
         bool valid = BCrypt.Net.BCrypt.Verify(Password, storedHash);
 
@@ -54,17 +70,25 @@ public class AuthController : Controller
             return View();
         }
 
-        // ✅ Store logged-in email in session
-        HttpContext.Session.SetString("UserEmail", Email);
+        // ✅ STORE SESSION CORRECTLY
+        HttpContext.Session.SetString("UserEmail", (string)user.email);
+        HttpContext.Session.SetString("UserId", (string)user.id);
 
         TempData["Success"] = "Login successful!";
-        return RedirectToAction("Index", "Profile"); // redirect to profile page
+        return RedirectToAction("Index", "Home");
     }
 
+    // =========================
+    // GET REGISTER
+    // =========================
     [HttpGet]
     public IActionResult Register() => View();
 
+    // =========================
+    // POST REGISTER
+    // =========================
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(string FullName, string Email, string Password)
     {
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(Password);

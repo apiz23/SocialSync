@@ -5,129 +5,327 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SocialSync</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SocialSync.styles.css" asp-append-version="true" />
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-hover-gradient: linear-gradient(135deg, #5a6fd8 0%, #6b4490 100%);
             --primary-color: #667eea;
             --secondary-color: #764ba2;
             --dark-color: #1a202c;
-            --light-color: #f7fafc;
+            --light-color: #f8fafc;
             --gray-color: #718096;
+            --accent-color: #f687b3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+            color: #2d3748;
             line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
+        /* Enhanced Navbar */
         .navbar {
-            background: white;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            padding: 0.8rem 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
         }
 
         .navbar-brand {
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1.8rem;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            padding-left: 0.5rem;
-        }
-
-        .nav-link {
-            font-weight: 500;
-            color: var(--dark-color) !important;
-            margin: 0 0.5rem;
-            padding: 0.5rem 1rem !important;
-            border-radius: 8px;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
             transition: all 0.3s ease;
         }
 
+            .navbar-brand:hover {
+                transform: scale(1.02);
+            }
+
+            .navbar-brand i {
+                font-size: 1.6rem;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+        .nav-link {
+            font-weight: 500;
+            color: #4a5568 !important;
+            margin: 0 0.3rem;
+            padding: 0.7rem 1.2rem !important;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .nav-link::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: var(--primary-gradient);
+                transition: left 0.3s ease;
+                z-index: -1;
+                opacity: 0.1;
+            }
+
+            .nav-link:hover::before {
+                left: 0;
+            }
+
             .nav-link:hover {
-                background-color: rgba(102, 126, 234, 0.1);
+                color: var(--primary-color) !important;
                 transform: translateY(-2px);
             }
 
             .nav-link.active {
                 background: var(--primary-gradient);
                 color: white !important;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
             }
 
         .navbar-toggler {
             border: none;
             padding: 0.5rem;
+            background: transparent;
         }
 
             .navbar-toggler:focus {
-                box-shadow: none;
+                box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
             }
 
-        .container {
-            max-width: 1200px;
-            flex: 1;
-        }
-
-        .footer {
-            background: var(--dark-color);
+        /* Enhanced Profile Button */
+        .profile-btn {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            padding: 1.5rem 0;
-            margin-top: auto;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-            .footer a {
-                color: #a0aec0;
-                text-decoration: none;
-                transition: color 0.3s ease;
-            }
-
-                .footer a:hover {
-                    color: white;
-                }
-
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
         }
 
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+            .profile-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: left 0.6s;
             }
 
+            .profile-btn:hover::before {
+                left: 100%;
+            }
+
+            .profile-btn:hover {
+                transform: translateY(-3px) scale(1.05);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            }
+
+            .profile-btn:active {
+                transform: translateY(-1px) scale(0.98);
+            }
+
+            .profile-btn i {
+                font-size: 1.2rem;
+                transition: transform 0.3s ease;
+            }
+
+            .profile-btn:hover i {
+                transform: scale(1.1);
+            }
+
+        .profile-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            background: #f56565;
+            border-radius: 50%;
+            border: 2px solid white;
+            font-size: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1300px;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Enhanced Cards */
+        .card {
+            border: none;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+            .card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                border-color: rgba(102, 126, 234, 0.2);
+            }
+
+        /* Enhanced Buttons */
         .btn-primary {
             background: var(--primary-gradient);
             border: none;
-            padding: 0.6rem 1.8rem;
-            border-radius: 8px;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+            position: relative;
+            overflow: hidden;
         }
 
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            .btn-primary::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                transition: left 0.6s;
             }
 
+            .btn-primary:hover::before {
+                left: 100%;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+                background: var(--primary-hover-gradient);
+            }
+
+            .btn-primary:active {
+                transform: translateY(-1px);
+            }
+
+        /* Enhanced Alerts */
         .alert {
-            border-radius: 10px;
+            border-radius: 12px;
             border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 1.25rem 1.5rem;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
         }
 
         .fade-in {
             animation: fadeIn 0.5s ease-in;
+        }
+
+        .nav-link {
+            padding: 0.8rem !important;
+            margin: 0.2rem 0;
+        }
+
+        .profile-btn {
+            width: 40px;
+            height: 40px;
+        }
+
+        .container {
+            padding: 0 15px;
+        }
+
+        main {
+            padding: 1.5rem 0;
+        }
+
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 5px;
+        }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--primary-hover-gradient);
+            }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
         }
     </style>
 </head>
@@ -143,46 +341,24 @@
             <nav class="navbar navbar-expand-lg navbar-light sticky-top">
                 <div class="container">
                     <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                        <i class="fas fa-sync-alt me-2"></i>SocialSync
+                        <i class="bi bi-chat-heart-fill"></i>SocialSync
                     </a>
+
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                             aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="navbarContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
-                                    <i class="fas fa-home me-1"></i>Home
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">
-                                    <i class="fas fa-shield-alt me-1"></i>Privacy
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" href="#">
-                                    <i class="fas fa-users me-1"></i>Community
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" href="#">
-                                    <i class="fas fa-cog me-1"></i>Settings
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="d-flex align-items-center">
-                            <a asp-controller="Profile" asp-action="Index" class="btn btn-outline-primary rounded-circle p-2">
-                                <i class="fas fa-user"></i>
-                            </a>
-                        </div>
+
+                    <div class="d-flex align-items-center position-relative">
+                        <!-- Enhanced Profile Button -->
+                        <a asp-controller="Profile" asp-action="Index" class="profile-btn">
+                            <i class="bi bi-person-fill"></i>
+                        </a>
                     </div>
                 </div>
             </nav>
         </header>
     }
-
 
     <div class="container fade-in">
         <main role="main" class="pb-5 pt-3">
@@ -190,30 +366,12 @@
         </main>
     </div>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <a class="navbar-brand d-flex align-items-center justify-content-center justify-content-md-start" href="#">
-                        <i class="fas fa-sync-alt me-2"></i>SocialSync
-                    </a>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <div>
-                        <span class="text-muted">&copy; 2025 SocialSync</span>
-                        <a href="#" class="text-muted ms-3">Privacy</a>
-                        <a href="#" class="text-muted ms-3">Terms</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         $(document).ready(function() {
+            // Highlight active nav link
             var current = location.pathname;
             $('.nav-link').each(function() {
                 var $this = $(this);
@@ -222,16 +380,61 @@
                 }
             });
 
+            // Smooth scroll for anchor links
             $('a[href^="#"]').on('click', function(e) {
                 e.preventDefault();
                 var target = $(this.getAttribute('href'));
                 if (target.length) {
                     $('html, body').stop().animate({
                         scrollTop: target.offset().top - 80
-                    }, 1000);
+                    }, 800);
                 }
             });
+
+            // Add ripple effect to buttons
+            $('.btn-primary, .profile-btn').on('click', function(e) {
+                var $this = $(this);
+                var x = e.pageX - $this.offset().left;
+                var y = e.pageY - $this.offset().top;
+
+                var ripple = $('<span/>').addClass('ripple-effect').css({
+                    left: x,
+                    top: y
+                });
+
+                $this.append(ripple);
+
+                setTimeout(function() {
+                    ripple.remove();
+                }, 600);
+            });
+
+            // Notification animation
+            $('.notification-badge').hover(
+                function() {
+                    $(this).css('animation', 'none');
+                },
+                function() {
+                    $(this).css('animation', 'pulse 2s infinite');
+                }
+            );
         });
+
+        // Add ripple effect CSS
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            .ripple-effect {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.7);
+                transform: scale(0);
+                animation: ripple-animation 0.6s linear;
+                pointer-events: none;
+            }
+
+
+        `;
+        document.head.appendChild(rippleStyle);
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

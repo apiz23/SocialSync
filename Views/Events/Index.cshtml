@@ -1,0 +1,231 @@
+﻿@model List<SocialSync.Models.Event>
+
+@{
+    ViewData["Title"] = "Events";
+    var currentUserEmail = Context.Session.GetString("UserEmail");
+}
+
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-calendar-event"></i> Events & Activities</h2>
+        @if (!string.IsNullOrEmpty(currentUserEmail))
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create Event
+            </a>
+        }
+    </div>
+
+    <!-- Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Events Grid -->
+    <div class="row">
+        @if (Model == null || !Model.Any())
+        {
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> No events yet. Create the first one!
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (var evt in Model)
+            {
+                var isPastEvent = evt.HasPassed;
+                var cardClass = isPastEvent ? "border-secondary" : "border-primary";
+                var statusBadge = isPastEvent ? "bg-secondary" : "bg-success";
+
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm h-100 @cardClass" style="border-width: 2px;">
+                        @if (!string.IsNullOrWhiteSpace(evt.ImageUrl))
+                        {
+                            <img src="@evt.ImageUrl"
+                                 class="card-img-top"
+                                 style="height: 200px; object-fit: cover;"
+                                 alt="Event image"
+                                 onerror="this.src='https://via.placeholder.com/400x200?text=Event+Image'" />
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-gradient-primary d-flex align-items-center justify-content-center"
+                                 style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <i class="bi bi-calendar-event text-white" style="font-size: 4rem;"></i>
+                            </div>
+                        }
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">@evt.Title</h5>
+                                <span class="badge @statusBadge">@evt.Status</span>
+                            </div>
+
+                            <p class="card-text text-muted small mb-3">@evt.Description</p>
+
+                            <div class="mb-2">
+                                <i class="bi bi-calendar3 text-primary"></i>
+                                <small>@evt.EventDate.ToString("MMM dd, yyyy - hh:mm tt")</small>
+                            </div>
+
+                            <div class="mb-2">
+                                <i class="bi bi-geo-alt text-danger"></i>
+                                <small>@evt.Location</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <i class="bi bi-people text-success"></i>
+                                <small>
+                                    @evt.ParticipantCount
+                                    @if (evt.MaxParticipants.HasValue)
+                                    {
+                                        <span>/ @evt.MaxParticipants</span>
+                                    }
+                                    participants
+                                </small>
+                                @if (evt.IsFull)
+                                {
+                                    <span class="badge bg-danger ms-2">Full</span>
+                                }
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <!-- Join/Leave Button -->
+                                @if (!string.IsNullOrEmpty(currentUserEmail) && !isPastEvent)
+                                {
+                                    @if (evt.HasJoined)
+                                    {
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                onclick="leaveEvent(@evt.EventId)">
+                                            <i class="bi bi-x-circle"></i> Leave
+                                        </button>
+                                    }
+                                    else if (!evt.IsFull)
+                                    {
+                                        <button class="btn btn-sm btn-primary"
+                                                onclick="joinEvent(@evt.EventId)">
+                                            <i class="bi bi-check-circle"></i> Join
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-secondary" disabled>
+                                            <i class="bi bi-x-circle"></i> Full
+                                        </button>
+                                    }
+                                }
+                                else if (string.IsNullOrEmpty(currentUserEmail))
+                                {
+                                    <small class="text-muted">Login to join</small>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">Event completed</small>
+                                }
+
+                                <!-- Edit/Delete (Only for creator) -->
+                                @if (evt.CreatedBy == currentUserEmail)
+                                {
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@evt.EventId"
+                                           class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete"
+                                           asp-route-id="@evt.EventId"
+                                           class="btn btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-light text-muted small">
+                            <i class="bi bi-person-circle"></i> Created by @evt.CreatedBy
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        async function joinEvent(eventId) {
+            if (!confirm('Do you want to join this event?')) return;
+
+            try {
+                const response = await fetch(`/Events/JoinEvent/${eventId}`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(result.message);
+                    location.reload();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        async function leaveEvent(eventId) {
+            if (!confirm('Are you sure you want to leave this event?')) return;
+
+            try {
+                const response = await fetch(`/Events/LeaveEvent/${eventId}`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(result.message);
+                    location.reload();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+    </script>
+}
+
+<style>
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+        }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>

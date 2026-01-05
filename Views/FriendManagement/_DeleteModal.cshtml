@@ -1,0 +1,24 @@
+﻿@model SocialSync.Models.User
+
+<form asp-action="DeleteConfirmed" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">
+            <i class="fas fa-exclamation-triangle"></i> Confirm Delete
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+        Are you sure you want to delete <strong>@Model.FullName</strong>?
+        <br />
+        <small class="text-muted">This action cannot be undone.</small>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>

@@ -1,0 +1,77 @@
+﻿@model SocialSync.Models.User
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <h3 class="text-center mb-4">Edit Profile</h3>
+
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <!-- REQUIRED -->
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label">User ID</label>
+                            <input class="form-control" value="@Model.Id" readonly />
+                        </div>
+
+                        <!-- EDITABLE -->
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input asp-for="FullName" class="form-control" />
+                        </div>
+
+                        <!-- READONLY -->
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" readonly />
+                        </div>
+
+                        <!-- EDITABLE -->
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input asp-for="Phone" class="form-control" />
+                        </div>
+
+                        <!-- READONLY -->
+                        <div class="mb-3">
+                            <label class="form-label">Date Joined</label>
+                            <input class="form-control"
+                                   value="@Model.DateJoined.ToString("dd MMM yyyy")"
+                                   readonly />
+                        </div>
+
+                        <!-- EDITABLE -->
+                        <div class="mb-3">
+                            <label class="form-label">Account Status</label>
+                            <select asp-for="IsActive" class="form-select">
+                                <option value="true">Active</option>
+                                <option value="false">Deactivate</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Save Changes
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary w-100 mt-2">
+                            Cancel
+                        </a>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

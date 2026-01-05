@@ -10,9 +10,19 @@
     </p>
 
     <div class="mt-4">
-        <a class="btn btn-primary btn-lg me-2" href="/Users">Manage Users</a>
-        <a class="btn btn-success btn-lg me-2" href="/Posts">View Posts</a>
-        <a class="btn btn-warning btn-lg me-2" href="/Events">Upcoming Events</a>
+        <a asp-controller="FriendManagement" asp-action="Index"
+           class="btn btn-primary btn-lg me-2">
+            Manage Friends
+        </a>
+        <a asp-controller="Posts" asp-action="Index"
+           class="btn btn-primary btn-lg me-2">
+            View Posts
+        </a>
+        <a asp-controller="Events"
+           asp-action="Index"
+           class="btn btn-warning btn-lg me-2">
+            Upcoming Events
+        </a>
         <a class="btn btn-info btn-lg" href="/Messages">Messages</a>
     </div>
 </div>

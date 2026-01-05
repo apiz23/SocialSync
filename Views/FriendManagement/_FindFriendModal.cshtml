@@ -1,0 +1,48 @@
+﻿@model IEnumerable<SocialSync.Models.User>
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        <i class="fas fa-user-search"></i> Find Friends
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+    <form onsubmit="event.preventDefault(); searchFriend();">
+        <div class="input-group mb-3">
+            <input type="text"
+                   id="friendSearchInput"
+                   class="form-control"
+                   placeholder="Search by name or email..." />
+            <button class="btn btn-outline-secondary">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
+
+    @if (Model.Any())
+    {
+        <ul class="list-group">
+            @foreach (var user in Model)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>@user.FullName</strong><br />
+                        <small class="text-muted">@user.Email</small>
+                    </div>
+
+                    <!-- IMPORTANT: BUTTON, NOT FORM -->
+                    <button class="btn btn-sm btn-success"
+                            onclick="addFriend('@user.Id')">
+                        <i class="fas fa-user-plus"></i> Add
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <div class="alert alert-info">No users found.</div>
+    }
+</div>

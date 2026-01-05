@@ -1,0 +1,123 @@
+﻿@model SocialSync.Models.Event
+
+@{
+    ViewData["Title"] = "Delete Event";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Delete Event
+                    </h2>
+                </div>
+
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="bi bi-exclamation-circle"></i> Are you sure you want to delete this event?</h5>
+                        <p class="mb-0">This action cannot be undone. All participant data will be removed.</p>
+                    </div>
+
+                    <!-- Event Preview -->
+                    <div class="card mb-4">
+                        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl"
+                                 class="card-img-top"
+                                 style="height: 250px; object-fit: cover;"
+                                 alt="Event image"
+                                 onerror="this.style.display='none'" />
+                        }
+
+                        <div class="card-header bg-light">
+                            <h5 class="mb-1">@Model.Title</h5>
+                            <span class="badge bg-primary">@Model.Status</span>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="card-text">@Model.Description</p>
+
+                            <div class="mb-2">
+                                <i class="bi bi-calendar3 text-primary"></i>
+                                <strong>Date:</strong> @Model.EventDate.ToString("MMMM dd, yyyy 'at' hh:mm tt")
+                            </div>
+
+                            <div class="mb-2">
+                                <i class="bi bi-geo-alt text-danger"></i>
+                                <strong>Location:</strong> @Model.Location
+                            </div>
+
+                            <div class="mb-2">
+                                <i class="bi bi-people text-success"></i>
+                                <strong>Participants:</strong>
+                                @if (Model.MaxParticipants.HasValue)
+                                {
+                                    <span>Up to @Model.MaxParticipants people</span>
+                                }
+                                else
+                                {
+                                    <span>Unlimited</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-light text-muted">
+                            <i class="bi bi-person-circle"></i> Created by @Model.CreatedBy
+                            on @Model.CreatedAt.ToString("MMM dd, yyyy")
+                        </div>
+                    </div>
+
+                    <!-- Delete Form -->
+                    <form asp-action="Delete" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="EventId" />
+                        <div class="alert alert-warning">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Warning:</strong> Deleting this event will remove all associated participant records.
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg" id="deleteBtn">
+                                <i class="bi bi-trash"></i> Delete Event
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deleteBtn = document.getElementById('deleteBtn');
+        const form = document.querySelector('form');
+
+        form?.addEventListener('submit', function(e) {
+            const confirmed = confirm('Are you absolutely sure? This cannot be undone!');
+
+            if (!confirmed) {
+                e.preventDefault();
+                return false;
+            }
+
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
+        });
+    </script>
+}
+
+<style>
+    .card {
+        border: 2px solid #dc3545;
+    }
+
+    .btn-lg {
+        padding: .75rem 2rem;
+    }
+</style>

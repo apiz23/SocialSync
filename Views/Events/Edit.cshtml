@@ -1,0 +1,192 @@
+﻿@model SocialSync.Models.Event
+
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-pencil-square"></i> Edit Event
+                    </h2>
+                </div>
+
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="EventId" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <!-- Title -->
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold">
+                                <i class="bi bi-text-left"></i> Event Title <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Title" class="form-control" required />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">
+                                <i class="bi bi-file-text"></i> Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea asp-for="Description"
+                                      class="form-control"
+                                      rows="5"
+                                      required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <!-- Date & Time -->
+                        <div class="mb-3">
+                            <label asp-for="EventDate" class="form-label fw-bold">
+                                <i class="bi bi-calendar3"></i> Event Date & Time <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="EventDate"
+                                   type="datetime-local"
+                                   class="form-control"
+                                   required />
+                            <span asp-validation-for="EventDate" class="text-danger"></span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-3">
+                            <label asp-for="Location" class="form-label fw-bold">
+                                <i class="bi bi-geo-alt"></i> Location <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Location" class="form-control" required />
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                        <!-- Max Participants -->
+                        <div class="mb-3">
+                            <label asp-for="MaxParticipants" class="form-label fw-bold">
+                                <i class="bi bi-people"></i> Max Participants (Optional)
+                            </label>
+                            <input asp-for="MaxParticipants"
+                                   type="number"
+                                   class="form-control"
+                                   min="1"
+                                   max="1000" />
+                            <span asp-validation-for="MaxParticipants" class="text-danger"></span>
+                            <small class="text-muted">Leave empty for unlimited participants</small>
+                        </div>
+
+                        <!-- Image URL -->
+                        <div class="mb-3">
+                            <label asp-for="ImageUrl" class="form-label fw-bold">
+                                <i class="bi bi-image"></i> Event Image URL (Optional)
+                            </label>
+                            <input asp-for="ImageUrl" class="form-control" type="url" />
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+
+                        <!-- Image Preview -->
+                        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                        {
+                            <div class="mb-3" id="imagePreview">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-eye"></i> Current Image
+                                </label>
+                                <img id="previewImg"
+                                     src="@Model.ImageUrl"
+                                     class="img-fluid rounded"
+                                     style="max-height:300px;"
+                                     onerror="this.style.display='none'" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mb-3" id="imagePreview" style="display:none;">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-eye"></i> Image Preview
+                                </label>
+                                <img id="previewImg"
+                                     class="img-fluid rounded"
+                                     style="max-height:300px;" />
+                            </div>
+                        }
+
+                        <!-- Event Info -->
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Created by:</strong> @Model.CreatedBy<br />
+                                <strong>Created at:</strong> @Model.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")
+                            </small>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const imageInput = document.getElementById('ImageUrl');
+        const preview = document.getElementById('imagePreview');
+        const img = document.getElementById('previewImg');
+
+        imageInput?.addEventListener('input', function () {
+            if (!this.value) {
+                preview.style.display = 'none';
+                return;
+            }
+
+            try {
+                const url = new URL(this.value);
+                img.src = url.href;
+                preview.style.display = 'block';
+                img.onerror = () => preview.style.display = 'none';
+            } catch {
+                preview.style.display = 'none';
+            }
+        });
+
+        // Convert UTC to local time for display
+        const dateInput = document.getElementById('EventDate');
+        if (dateInput && dateInput.value) {
+            const utcDate = new Date(dateInput.value);
+            const localDate = new Date(utcDate.getTime() - (utcDate.getTimezoneOffset() * 60000));
+            dateInput.value = localDate.toISOString().slice(0, 16);
+        }
+    </script>
+}
+
+<style>
+    .card {
+        border: none;
+    }
+
+    .btn-lg {
+        padding: .75rem 2rem;
+    }
+</style>

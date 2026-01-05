@@ -1,0 +1,178 @@
+﻿@model SocialSync.Models.Post
+
+@{
+    ViewData["Title"] = "Edit Post";
+    var currentUserEmail = Context.Session.GetString("UserEmail");
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-pencil-square"></i> Edit Post
+                    </h2>
+                </div>
+
+                <div class="card-body">
+                    <!-- Show error if user is not the author -->
+                    @if (Model.Author != currentUserEmail)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            You don't have permission to edit this post.
+                        </div>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Posts
+                        </a>
+                    }
+                    else
+                    {
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                @TempData["Error"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        }
+
+                        <form asp-action="EditPost" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="PostId" />
+
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                            <!-- Title -->
+                            <div class="mb-3">
+                                <label asp-for="Title" class="form-label fw-bold">
+                                    <i class="bi bi-text-left"></i> Title <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Title" class="form-control" required />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="mb-3">
+                                <label asp-for="Content" class="form-label fw-bold">
+                                    <i class="bi bi-file-text"></i> Content <span class="text-danger">*</span>
+                                </label>
+                                <textarea asp-for="Content"
+                                          class="form-control"
+                                          rows="8"
+                                          required></textarea>
+                                <span asp-validation-for="Content" class="text-danger"></span>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="mb-3">
+                                <label asp-for="Category" class="form-label fw-bold">
+                                    <i class="bi bi-tag"></i> Category
+                                </label>
+                                <select asp-for="Category" class="form-select">
+                                    <option value="General">General</option>
+                                    <option value="Announcement">Announcement</option>
+                                    <option value="Event">Event</option>
+                                    <option value="Club Activity">Club Activity</option>
+                                    <option value="Discussion">Discussion</option>
+                                </select>
+                            </div>
+
+                            <!-- Image URL -->
+                            <div class="mb-3">
+                                <label asp-for="ImageUrl" class="form-label fw-bold">
+                                    <i class="bi bi-image"></i> Image URL (Optional)
+                                </label>
+                                <input asp-for="ImageUrl" class="form-control" type="url" />
+                                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                            </div>
+
+                            <!-- Image Preview -->
+                            @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                            {
+                                <div class="mb-3" id="imagePreview">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-eye"></i> Current Image
+                                    </label>
+                                    <img id="previewImg"
+                                         src="@Model.ImageUrl"
+                                         class="img-fluid rounded"
+                                         style="max-height:300px;"
+                                         onerror="this.style.display='none'" />
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="mb-3" id="imagePreview" style="display:none;">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-eye"></i> Image Preview
+                                    </label>
+                                    <img id="previewImg"
+                                         class="img-fluid rounded"
+                                         style="max-height:300px;" />
+                                </div>
+                            }
+
+                            <!-- Post Info -->
+                            <div class="alert alert-info">
+                                <small>
+                                    <i class="bi bi-info-circle"></i>
+                                    <strong>Author:</strong> @Model.Author<br />
+                                    <strong>Created:</strong> @Model.CreatedDate.ToString("MMMM dd, yyyy 'at' hh:mm tt")
+                                </small>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle"></i> Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const imageInput = document.getElementById('ImageUrl');
+        const preview = document.getElementById('imagePreview');
+        const img = document.getElementById('previewImg');
+
+        imageInput?.addEventListener('input', function () {
+            if (!this.value) {
+                preview.style.display = 'none';
+                return;
+            }
+
+            try {
+                const url = new URL(this.value);
+                img.src = url.href;
+                preview.style.display = 'block';
+                img.onerror = () => preview.style.display = 'none';
+            } catch {
+                preview.style.display = 'none';
+            }
+        });
+    </script>
+}
+
+<style>
+    .card {
+        border: none;
+    }
+
+    .btn-lg {
+        padding: .75rem 2rem;
+    }
+</style>

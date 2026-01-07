@@ -1,77 +1,212 @@
 ﻿@model SocialSync.Models.User
-
 @{
     ViewData["Title"] = "Edit Profile";
 }
 
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    /* Custom Gradient Styles */
+    :root {
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-primary-hover: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+
+    .btn-gradient-primary {
+        background: var(--gradient-primary);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-gradient-primary:hover {
+            background: var(--gradient-primary-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4) !important;
+        }
+
+        .btn-gradient-primary:active {
+            transform: translateY(0);
+        }
+
+    .card {
+        border-radius: 15px;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+
+    .bio-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .section-divider {
+        border-top: 2px solid #e9ecef;
+        margin: 25px 0;
+        position: relative;
+    }
+
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: var(--gradient-primary);
+        }
+</style>
+
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-
+        <div class="col-md-8">
             <div class="card shadow-sm border-0">
-                <div class="card-body">
-
-                    <h3 class="text-center mb-4">Edit Profile</h3>
+                <div class="card-body p-4">
+                    <h3 class="text-center mb-4">
+                        <i class="fas fa-user-edit me-2" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                        Edit Profile
+                    </h3>
 
                     <form asp-action="Edit" method="post">
                         @Html.AntiForgeryToken()
 
-                        <!-- REQUIRED -->
+                        <!-- HIDDEN FIELDS -->
                         <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Email" />
+                        <input type="hidden" asp-for="Password" />
+                        <input type="hidden" asp-for="DateJoined" />
+
+                        <!-- BIO & PERSONA SECTION -->
+                        <div class="bio-section">
+                            <h5 class="mb-3">
+                                <i class="fas fa-id-card me-2" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                                About Me
+                            </h5>
+
+                            <div class="mb-3">
+                                <label asp-for="Bio" class="form-label fw-semibold">
+                                    <i class="fas fa-quote-left me-2 text-primary"></i>Bio
+                                </label>
+                                <textarea asp-for="Bio" class="form-control" rows="3"
+                                          placeholder="Tell others about yourself... (e.g., I'm passionate about technology and love exploring new ideas!)"></textarea>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>This will be visible to users who want to follow you
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Persona1" class="form-label fw-semibold">
+                                    <i class="fas fa-star me-2 text-primary"></i>Persona Tag 1
+                                </label>
+                                <input asp-for="Persona1" class="form-control"
+                                       placeholder="e.g., Creative Thinker, Tech Enthusiast, Music Lover"
+                                       maxlength="30" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Persona2" class="form-label fw-semibold">
+                                    <i class="fas fa-heart me-2 text-primary"></i>Persona Tag 2
+                                </label>
+                                <input asp-for="Persona2" class="form-control"
+                                       placeholder="e.g., Fitness Lover, Coffee Addict, Bookworm"
+                                       maxlength="30" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Persona3" class="form-label fw-semibold">
+                                    <i class="fas fa-sparkles me-2 text-primary"></i>Persona Tag 3
+                                </label>
+                                <input asp-for="Persona3" class="form-control"
+                                       placeholder="e.g., Adventure Seeker, Foodie, Nature Explorer"
+                                       maxlength="30" />
+                            </div>
+                        </div>
+
+                        <!-- SECTION DIVIDER -->
+                        <div class="section-divider"></div>
+
+                        <!-- PROFILE INFORMATION -->
+                        <h5 class="mb-3">
+                            <i class="fas fa-user-circle me-2" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                            Profile Information
+                        </h5>
 
                         <div class="mb-3">
-                            <label class="form-label">User ID</label>
-                            <input class="form-control" value="@Model.Id" readonly />
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-fingerprint me-2 text-muted"></i>User ID
+                            </label>
+                            <input class="form-control bg-light" value="@Model.Id" readonly />
                         </div>
 
                         <!-- EDITABLE -->
                         <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input asp-for="FullName" class="form-control" />
+                            <label asp-for="FullName" class="form-label fw-semibold">
+                                <i class="fas fa-user me-2 text-primary"></i>Full Name
+                            </label>
+                            <input asp-for="FullName" class="form-control" required />
                         </div>
 
                         <!-- READONLY -->
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input asp-for="Email" class="form-control" readonly />
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-envelope me-2 text-muted"></i>Email
+                            </label>
+                            <input value="@Model.Email" class="form-control bg-light" readonly />
+                            <small class="text-muted">
+                                <i class="fas fa-lock me-1"></i>Email cannot be changed
+                            </small>
                         </div>
 
                         <!-- EDITABLE -->
                         <div class="mb-3">
-                            <label class="form-label">Phone</label>
-                            <input asp-for="Phone" class="form-control" />
+                            <label asp-for="Phone" class="form-label fw-semibold">
+                                <i class="fas fa-phone me-2 text-primary"></i>Phone
+                            </label>
+                            <input asp-for="Phone" class="form-control" placeholder="+60 12-345 6789" />
                         </div>
 
                         <!-- READONLY -->
                         <div class="mb-3">
-                            <label class="form-label">Date Joined</label>
-                            <input class="form-control"
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-calendar me-2 text-muted"></i>Date Joined
+                            </label>
+                            <input class="form-control bg-light"
                                    value="@Model.DateJoined.ToString("dd MMM yyyy")"
                                    readonly />
                         </div>
 
                         <!-- EDITABLE -->
-                        <div class="mb-3">
-                            <label class="form-label">Account Status</label>
+                        <div class="mb-4">
+                            <label asp-for="IsActive" class="form-label fw-semibold">
+                                <i class="fas fa-toggle-on me-2 text-primary"></i>Account Status
+                            </label>
                             <select asp-for="IsActive" class="form-select">
                                 <option value="true">Active</option>
                                 <option value="false">Deactivate</option>
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">
-                            Save Changes
+                        <!-- BUTTONS -->
+                        <button type="submit" class="btn btn-lg btn-gradient-primary w-100 mb-3 fw-semibold shadow-sm">
+                            <i class="fas fa-save me-2"></i>Save Changes
                         </button>
-
-                        <a asp-action="Index"
-                           class="btn btn-outline-secondary w-100 mt-2">
-                            Cancel
+                        <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2">
+                            <i class="fas fa-times me-2"></i>Cancel
                         </a>
                     </form>
-
                 </div>
             </div>
-
         </div>
     </div>
 </div>

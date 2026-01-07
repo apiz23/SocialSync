@@ -1,11 +1,106 @@
 ﻿@model SocialSync.Models.User
-
 @{
     ViewData["Title"] = "My Profile";
 }
 
-<div class="container py-5">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<style>
+    /* Custom Gradient Styles */
+    :root {
+        --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-primary-hover: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+
+    .btn-gradient-primary {
+        background: var(--gradient-primary);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-gradient-primary:hover {
+            background: var(--gradient-primary-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4) !important;
+        }
+
+        .btn-gradient-primary:active {
+            transform: translateY(0);
+        }
+
+    .card {
+        border-radius: 15px;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    }
+
+    /* Persona Badge Styles */
+    .persona-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        margin: 5px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+        .persona-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 25px;
+            padding: 2px;
+            background: var(--gradient-primary);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+        }
+
+        .persona-badge i {
+            margin-right: 6px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+    .persona-container {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+        min-height: 80px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bio-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+</style>
+
+<div class="container py-5">
     <!-- SUCCESS / ERROR MESSAGE -->
     @if (TempData["Success"] != null)
     {
@@ -14,7 +109,6 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
-
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -22,51 +116,113 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
-
     <div class="row justify-content-center">
-        <div class="col-md-6">
-
+        <div class="col-md-8">
             <div class="card shadow-sm border-0">
-                <div class="card-body">
-
+                <div class="card-body p-4">
                     <h3 class="text-center mb-4">My Profile</h3>
 
-                    <div class="mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input class="form-control" value="@Model.FullName" readonly />
+                    <!-- Bio Section with Persona Tags -->
+                    <div class="bio-section">
+                        <h5 class="mb-3">
+                            <i class="fas fa-id-card me-2" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                            About Me
+                        </h5>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-quote-left me-2 text-primary"></i>Bio
+                            </label>
+                            <textarea class="form-control" rows="3" readonly>@(Model.Bio ?? "No bio added yet.")</textarea>
+                        </div>
+                        <div>
+                            <label class="form-label fw-semibold mb-2">
+                                <i class="fas fa-tags me-2 text-primary"></i>Persona Tags
+                                <small class="text-muted">(Visible to users who want to follow you)</small>
+                            </label>
+                            <div class="persona-container">
+                                @if (!string.IsNullOrEmpty(Model.Persona1))
+                                {
+                                    <span class="persona-badge">
+                                        <i class="fas fa-star"></i>@Model.Persona1
+                                    </span>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Persona2))
+                                {
+                                    <span class="persona-badge">
+                                        <i class="fas fa-heart"></i>@Model.Persona2
+                                    </span>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Persona3))
+                                {
+                                    <span class="persona-badge">
+                                        <i class="fas fa-sparkles"></i>@Model.Persona3
+                                    </span>
+                                }
+                                @if (string.IsNullOrEmpty(Model.Persona1) && string.IsNullOrEmpty(Model.Persona2) && string.IsNullOrEmpty(Model.Persona3))
+                                {
+                                    <p class="text-muted mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>No persona tags added yet. Click "Edit Profile" to add them!
+                                    </p>
+                                }
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input class="form-control" value="@Model.Email" readonly />
+                    <!-- Profile Information -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-user me-2 text-primary"></i>Full Name
+                            </label>
+                            <input class="form-control" value="@Model.FullName" readonly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-envelope me-2 text-primary"></i>Email
+                            </label>
+                            <input class="form-control" value="@Model.Email" readonly />
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Phone</label>
-                        <input class="form-control" value="@Model.Phone" readonly />
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-phone me-2 text-primary"></i>Phone
+                            </label>
+                            <input class="form-control" value="@Model.Phone" readonly />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-calendar me-2 text-primary"></i>Date Joined
+                            </label>
+                            <input class="form-control"
+                                   value="@Model.DateJoined.ToString("dd MMM yyyy")"
+                                   readonly />
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Date Joined</label>
-                        <input class="form-control"
-                               value="@Model.DateJoined.ToString("dd MMM yyyy")"
-                               readonly />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Account Status</label>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="fas fa-check-circle me-2 text-primary"></i>Account Status
+                        </label>
                         <input class="form-control"
                                value="@(Model.IsActive ? "Active" : "Deactivated")"
                                readonly />
                     </div>
 
-                    <a asp-action="Edit" class="btn btn-primary w-100">
-                        Edit Profile
+                    <!-- Edit Profile Button -->
+                    <a asp-action="Edit" class="btn btn-primary w-100 mb-3 py-2">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
                     </a>
 
+                    <!-- Logout Button -->
+                    <form method="post" asp-action="Logout" asp-controller="Auth">
+                        <button type="submit" class="btn btn-lg btn-gradient-primary w-100 fw-semibold shadow-sm">
+                            <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+                        </button>
+                    </form>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

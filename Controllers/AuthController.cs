@@ -40,7 +40,7 @@ public class AuthController : Controller
     public async Task<IActionResult> Login(string Email, string Password)
     {
         var response = await _http.GetAsync(
-            $"sosial_sync_users?email=eq.{Email}&select=id,email,password"
+            $"social_sync_users?email=eq.{Email}&select=id,email,password"
         );
 
         if (!response.IsSuccessStatusCode)
@@ -103,7 +103,7 @@ public class AuthController : Controller
         var json = JsonConvert.SerializeObject(newUser);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await _http.PostAsync("sosial_sync_users", content);
+        var response = await _http.PostAsync("social_sync_users", content);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -113,5 +113,13 @@ public class AuthController : Controller
 
         TempData["Success"] = "Account created successfully!";
         return RedirectToAction("Login");
+    }
+
+    [HttpPost]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        // Or use your authentication signout method
+        return RedirectToAction("Login", "Auth");
     }
 }

@@ -2,13 +2,16 @@
     ViewData["Title"] = "Login - SocialSync";
 }
 
-<div class="min-vh-80 d-flex align-items-center justify-content-center py-5">
+<div class="vh-100 d-flex align-items-center justify-content-center overflow-hidden">
     <div class="card border-0 shadow-lg" style="max-width: 600px; width: 100%; border-radius: 20px; overflow: hidden;">
         <!-- Gradient Header -->
         <div class="card-header bg-gradient-primary text-white text-center py-4 border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <div class="d-flex justify-content-center mb-3">
-                <div class="rounded-circle bg-white p-3" style="width: 70px; height: 70px;">
-                    <i class="fas fa-users fa-2x text-gradient-primary" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                <div class="rounded-circle bg-white d-flex align-items-center justify-content-center shadow-sm" style="width: 70px; height: 70px;">
+                    <img src="~/img/icon.png"
+                         alt="SocialSync Logo"
+                         class="img-fluid"
+                         style="width: 45px; height: 45px; object-fit: contain;">
                 </div>
             </div>
             <h3 class="fw-bold mb-1">Welcome Back</h3>
@@ -110,6 +113,11 @@
     :root {
         --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         --gradient-primary-hover: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+
+    html, body {
+        height: 100%;
+        overflow: hidden;
     }
 
     .bg-gradient-primary {

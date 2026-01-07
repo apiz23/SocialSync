@@ -340,21 +340,31 @@
         <header>
             <nav class="navbar navbar-expand-lg navbar-light sticky-top">
                 <div class="container">
-                    <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                        <i class="bi bi-chat-heart-fill"></i>SocialSync
+                    <a class="navbar-brand d-flex align-items-center"
+                       asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index">
+
+                        <img src="~/img/icon.png"
+                             alt="SocialSync Logo"
+                             width="28"
+                             height="28"
+                             class="me-2" />
+
+                        <span class="fw-bold">SocialSync</span>
                     </a>
+
 
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                             aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
-                    <div class="d-flex align-items-center position-relative">
-                        <!-- Enhanced Profile Button -->
-                        <a asp-controller="Profile" asp-action="Index" class="profile-btn">
-                            <i class="bi bi-person-fill"></i>
-                        </a>
-                    </div>
+                    <a asp-controller="Profile" asp-action="Index" class="profile-btn p-0">
+                        <img src="https://github.com/shadcn.png"
+                             alt="User Profile"
+                             style="width: 100%; height: 100%; object-fit: cover;" />
+                    </a>
                 </div>
             </nav>
         </header>

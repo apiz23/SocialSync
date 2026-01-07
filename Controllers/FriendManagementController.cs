@@ -32,7 +32,7 @@ namespace SocialSync.Controllers
                 return null;
 
             var response = await _http.GetAsync(
-                $"sosial_sync_users?email=eq.{email}&select=id"
+                $"social_sync_users?email=eq.{email}&select=id"
             );
 
             var json = await response.Content.ReadAsStringAsync();
@@ -56,7 +56,7 @@ namespace SocialSync.Controllers
 
             // 1️⃣ Get my friend IDs
             var friendLinkResponse = await _http.GetAsync(
-                $"sosial_sync_friends?user_id=eq.{myId}&select=friend_id"
+                $"social_sync_friends?user_id=eq.{myId}&select=friend_id"
             );
 
             if (!friendLinkResponse.IsSuccessStatusCode)
@@ -76,8 +76,8 @@ namespace SocialSync.Controllers
             var idFilter = $"id=in.({string.Join(",", friendIds)})";
 
             var endpoint = string.IsNullOrEmpty(searchString)
-                ? $"sosial_sync_users?select=*&{idFilter}"
-                : $"sosial_sync_users?select=*&{idFilter}" +
+                ? $"social_sync_users?select=*&{idFilter}"
+                : $"social_sync_users?select=*&{idFilter}" +
                   $"&or=(fullname.ilike.*{searchString}*,email.ilike.*{searchString}*)";
 
             var response = await _http.GetAsync(endpoint);
@@ -101,7 +101,7 @@ namespace SocialSync.Controllers
                 return NotFound();
 
             var response = await _http.GetAsync(
-                $"sosial_sync_users?id=eq.{id}&select=*"
+                $"social_sync_users?id=eq.{id}&select=*"
             );
 
             var json = await response.Content.ReadAsStringAsync();
@@ -122,7 +122,7 @@ namespace SocialSync.Controllers
                 return NotFound();
 
             var response = await _http.GetAsync(
-                $"sosial_sync_users?id=eq.{id}&select=*"
+                $"social_sync_users?id=eq.{id}&select=*"
             );
 
             var json = await response.Content.ReadAsStringAsync();
@@ -151,7 +151,7 @@ namespace SocialSync.Controllers
 
             var request = new HttpRequestMessage(
                 HttpMethod.Delete,
-                $"sosial_sync_friends?user_id=eq.{myId}&friend_id=eq.{id}"
+                $"social_sync_friends?user_id=eq.{myId}&friend_id=eq.{id}"
             );
 
             var response = await _http.SendAsync(request);
@@ -179,7 +179,7 @@ namespace SocialSync.Controllers
 
             // 1️⃣ Get my existing friend IDs first
             var friendIdResponse = await _http.GetAsync(
-                $"sosial_sync_friends?user_id=eq.{myId}&select=friend_id"
+                $"social_sync_friends?user_id=eq.{myId}&select=friend_id"
             );
 
             var friendIdsJson = await friendIdResponse.Content.ReadAsStringAsync();
@@ -195,8 +195,8 @@ namespace SocialSync.Controllers
                 : "";
 
             var endpoint = string.IsNullOrEmpty(search)
-                ? $"sosial_sync_users?select=*&email=neq.{myEmail}{excludeIds}"
-                : $"sosial_sync_users?select=*&email=neq.{myEmail}{excludeIds}" +
+                ? $"social_sync_users?select=*&email=neq.{myEmail}{excludeIds}"
+                : $"social_sync_users?select=*&email=neq.{myEmail}{excludeIds}" +
                   $"&or=(fullname.ilike.*{search}*,email.ilike.*{search}*)";
 
             var response = await _http.GetAsync(endpoint);
@@ -238,7 +238,7 @@ namespace SocialSync.Controllers
 
             var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                "sosial_sync_friends"
+                "social_sync_friends"
             )
             {
                 Content = content

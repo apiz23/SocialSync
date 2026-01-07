@@ -27,5 +27,17 @@ namespace SocialSync.Models
 
         [JsonProperty("is_active")]
         public bool IsActive { get; set; }
+
+        [JsonProperty("bio")]
+        public string? Bio { get; set; }
+
+        [JsonProperty("persona1")]
+        public string? Persona1 { get; set; }
+
+        [JsonProperty("persona2")]
+        public string? Persona2 { get; set; }
+
+        [JsonProperty("persona3")]
+        public string? Persona3 { get; set; }
     }
 }
